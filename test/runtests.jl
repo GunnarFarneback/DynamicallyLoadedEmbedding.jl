@@ -33,9 +33,13 @@ end
 
 cfunctions_path = abspath(dirname(@__DIR__), "src", "julia_cfunctions.jl")
 
+# `VERSION` is usually not the same as this for nightly builds.
+# TODO: Find out whether there's some more convenient way to get
+#       exactly the same string as this `ccall`.
+version_string = unsafe_string(ccall(:jl_ver_string, Ptr{Cchar}, ()))
 expected_stdout =
     """
-    Julia version $(VERSION)
+    Julia version $(version_string)
     0.5
     fibonacci(10) = 55
     """
