@@ -63,6 +63,24 @@ int main(int argc, const char **argv)
 
     printf("fibonacci(10) = %d\n", fibonacci(10));
 
+    int xi[4] = {1, 1, 1, 0};
+    float xf[3] = {0.0, 0.5, 1.0};
+
+    add_element_number_int(xi, 4);
+    add_element_number_float(xf, 3);
+
+    printf("xi =");
+    for (int i = 0; i < 4; i++) {
+        printf(" %d", xi[i]);
+    }
+    printf("\n");
+
+    printf("xf =");
+    for (int i = 0; i < 3; i++) {
+        printf(" %3.1f", xf[i]);
+    }
+    printf("\n");
+
     /* Test that exceptions are handled gracefully. */
     julia_eval_string("function this_function_has_no_methods end; this_function_has_no_methods()", "Exception test: ");
     fflush(stdout);

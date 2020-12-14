@@ -11,5 +11,13 @@ int load_julia_cfunctions()
     if (!mutual_fibonacci)
         return 0;
 
+    add_element_number_int = get_cfunction_pointer("add_element_number_int");
+    if (!add_element_number_int)
+        return 0;
+
+    add_element_number_float = get_cfunction_pointer("add_element_number_float");
+    if (!add_element_number_float)
+        return 0;
+
     return 1;
 }

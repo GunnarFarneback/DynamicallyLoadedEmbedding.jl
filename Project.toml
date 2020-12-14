@@ -1,7 +1,7 @@
 name = "DynamicallyLoadedEmbedding"
 uuid = "bb81f446-86f5-47d0-8ffc-7ac2adc264fd"
 authors = ["Gunnar Farnebäck <gunnar.farneback@contextvision.se>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 
