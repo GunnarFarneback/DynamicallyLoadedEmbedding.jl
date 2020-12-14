@@ -42,6 +42,8 @@ expected_stdout =
     Julia version $(version_string)
     0.5
     fibonacci(10) = 55
+    xi = 2 3 4 4
+    xf = 1.0 2.5 4.0
     """
 
 expected_stderr =
