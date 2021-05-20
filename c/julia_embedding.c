@@ -68,10 +68,16 @@ static void *load_function(void *libjulia, const char *name, int *success)
 {
     void *p = dlsym_(libjulia, name);
 
-    /* Unfortunately Julia renames `jl_init` to `jl_init__threading` if
-     * Julia is compiled with threading support, so we have to check
-     * which of these is available, or otherwise query Julia in some
-     * other way (https://github.com/JuliaLang/julia/issues/28824).
+    /* Unfortunately Julia 0.7 - Julia 1.6 renames `jl_init` to
+     * `jl_init__threading` if Julia is compiled with threading
+     * support, so we have to check which of these is available, or
+     * otherwise query Julia in some other way
+     * (https://github.com/JuliaLang/julia/issues/28824).
+     *
+     * This issue was fixed by
+     * https://github.com/JuliaLang/julia/pull/40637, so if you only
+     * support Julia 1.7 and later, this check is unnecessary but
+     * harmless.
      */
     if (!p && strcmp(name, "jl_init") == 0) {
         p = dlsym_(libjulia, "jl_init__threading");
