@@ -1,6 +1,11 @@
 #include "julia_embedding.h"
 #include "julia_cfunctions.h"
 
+double (*julia_sind)(double x);
+int (*mutual_fibonacci)(int n, int (*callback)(int n));
+void (*add_element_number_int)(int *x, int n);
+void (*add_element_number_float)(float *x, int n);
+
 int load_julia_cfunctions()
 {
     julia_sind = get_cfunction_pointer("julia_sind");
