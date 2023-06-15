@@ -25,6 +25,10 @@ if Sys.iswindows()
     # Place `julia` in PATH. It is assumed that this makes `libjulia`
     # also available from PATH.
     ENV["PATH"] = string(Sys.BINDIR, ";", ENV["PATH"])
+elseif Sys.isapple()
+    # Make `libjulia` available in LD_LIBRARY_PATH.
+    libdir = dirname(abspath(Libdl.dlpath("libjulia")))
+    ENV["DYLD_LIBRARY_PATH"] = string(libdir, ":", get(ENV, "DYLD_LIBRARY_PATH", ""))
 else
     # Make `libjulia` available in LD_LIBRARY_PATH.
     libdir = dirname(abspath(Libdl.dlpath("libjulia")))
