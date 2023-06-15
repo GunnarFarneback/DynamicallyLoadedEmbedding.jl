@@ -20,7 +20,7 @@
 #include <libgen.h>
 #endif
 
-/* Load a minimal subset of the functions from julia.h dynamically.
+/* Load a minimal subset of the functions from julia.h dynamically. */
 
 /* We could get the definitions of these structs from
  * `#include "julia.h"`, but we only need to declare them and
