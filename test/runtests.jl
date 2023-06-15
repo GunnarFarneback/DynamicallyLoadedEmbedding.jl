@@ -1,14 +1,12 @@
 using DynamicallyLoadedEmbedding
 using Test
-using Libdl
-# Piggyback on PackageCompiler internals. May have to replicate that
-# code if the internals change.
-using PackageCompiler: get_compiler, run_with_env, default_sysimg_path
+import Libdl
+using Clang_jll: clang
 
 # Compile the C code.
 srcdir = joinpath(dirname(@__DIR__), "c")
 destdir = mktempdir()
-compiler = get_compiler()
+compiler = clang()
 if Sys.iswindows()
     binary_path = "$(destdir)/julia_embedding.exe"
     cmd = `$(compiler) $(srcdir)/julia_embedding.c $(srcdir)/julia_cfunctions.c $(srcdir)/main.c -o $(binary_path)`
@@ -16,7 +14,7 @@ else
     binary_path = "$(destdir)/julia_embedding"
     cmd = `$(compiler) $(srcdir)/julia_embedding.c $(srcdir)/julia_cfunctions.c $(srcdir)/main.c -ldl -o $(binary_path)`
 end
-run_with_env(cmd, compiler)
+run(cmd)
 if !isfile(binary_path)
     error("Failed to compile binary.")
 end
@@ -65,6 +63,10 @@ expected_stderr =
     @test replace(read(out, String), "\r\n" => "\n") == expected_stdout
     @test replace(read(err, String), "\r\n" => "\n") == expected_stderr
 end
+
+# Borrowed from PackageCompiler.
+default_sysimg_path() = abspath(Sys.BINDIR, "..", "lib", "julia",
+                                "sys." * Libdl.dlext)
 
 @testset "with sysimage" begin
     out = Pipe()
