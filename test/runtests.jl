@@ -67,7 +67,14 @@ end
     err = Pipe()
     # Use the default system image to test the custom system image
     # code paths.
-    p = run(pipeline(`$(binary_path) $(default_sysimg_path()) $(cfunctions_path)`,
+    #
+    # Update: Actually this is too simple and not sufficiently
+    # representative of a real use case. To improve it we still use
+    # the default system image but copy it to another location first.
+    custom_sysimg_path, io = mktemp()
+    write(io, read(default_sysimg_path()))
+    close(io)
+    p = run(pipeline(`$(binary_path) $(custom_sysimg_path) $(cfunctions_path)`,
                      stdin=devnull, stdout=out, stderr=err))
     close(out.in)
     close(err.in)
