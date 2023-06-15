@@ -4,13 +4,13 @@ authors = ["Gunnar Farnebäck <gunnar.farneback@contextvision.se>"]
 version = "0.2.0"
 
 [compat]
-PackageCompiler = "~1.2, ~1.3, ~1.4, ~1.5, ~1.6"
+Clang_jll = "14, 15"
 julia = "1"
 
 [extras]
+Clang_jll = "0ee61d77-7f21-5576-8119-9fcc46b10100"
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
-PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Libdl", "PackageCompiler", "Test"]
+test = ["Clang_jll", "Libdl", "Test"]
