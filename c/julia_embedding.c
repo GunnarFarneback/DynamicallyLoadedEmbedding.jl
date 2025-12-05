@@ -1,8 +1,3 @@
-/* _GNU_SOURCE is only needed for for the non-Windows part of the
- * `find_julia_bindir` function.
- */
-#define _GNU_SOURCE
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,8 +11,6 @@
 #include <windows.h>
 #else
 #include <dlfcn.h>
-/* `libgen.h` is only needed for for the `find_julia_bindir` function. */
-#include <libgen.h>
 #endif
 
 /* Load a minimal subset of the functions from julia.h dynamically. */
@@ -147,46 +140,6 @@ static int load_julia_functions()
     return success;
 }
 
-/* Helper function for loading of a custom system image. It is
- * unfortunate that this is needed since Julia should know much better
- * itself where things are located than we realistically can know. See
- * the comment where this function is called from `julia_initialize`
- * for further discussion.
- */
-static char *find_julia_bindir()
-{
-    char *bindir = NULL;
-#ifdef _OS_WINDOWS_
-    HMODULE handle;
-    if (GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                           (LPCSTR)(uintptr_t)(jl_init), &handle)) {
-        TCHAR *path = malloc(MAX_PATH * sizeof(*path));
-        DWORD n = GetModuleFileNameA(handle, path, MAX_PATH);
-        if (n > 0) {
-            /* Poor man's dirname() on Windows. A better solution
-             * might involve _splitpath_s.
-             */
-            while (--n > 0) {
-                if (path[n - 1] == '/' || path[n - 1] == '\\') {
-                    path[n] = (TCHAR)0;
-                    break;
-                }
-            }
-            bindir = (char *)path;
-        }
-    }
-#else
-    Dl_info dlinfo;
-    if (dladdr((void *)jl_init, &dlinfo) != 0 && dlinfo.dli_fname) {
-        char *file_path = strdup(dlinfo.dli_fname);
-        (void)asprintf(&bindir, "%s/../%s", dirname(file_path), "bin");
-        free(file_path);
-    }
-#endif
-    return bindir;
-}
-
-
 /* Helper function to retrieve pointers to cfunctions on the Julia side. */
 void *get_cfunction_pointer(const char *name)
 {
@@ -244,18 +197,12 @@ int julia_initialize(const char *julia_loader_filename,
     if (!julia_system_image_path || strlen(julia_system_image_path) == 0)
         jl_init();
     else {
-        /* According to code comments the first argument to
-         * `jl_init_with_image` could be set to NULL, but the guessing
-         * code unfortunately doesn't reuse the detection from
-         * `jl_init` and in fact doesn't work for embedding.
-         *
-         * See https://github.com/JuliaLang/julia/issues/32614.
-         *
-         * Instead we replicate the detection code in `find_julia_bindir`.
+        /* Julia 0.7 needs the path to the Julia bindir as the first
+         * argument. Earlier versions of this package contained code
+         * to locate it, but that was removed in December 2025 since
+         * pre-1.0 versions are thoroughly antique at this point.
          */
-        char *bindir = find_julia_bindir();
-        jl_init_with_image(bindir, julia_system_image_path);
-        free(bindir);
+        jl_init_with_image(NULL, julia_system_image_path);
     }
 
     /* This is somewhat theoretic since `jl_init()` empirically either
