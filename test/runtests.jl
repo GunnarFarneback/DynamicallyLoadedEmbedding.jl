@@ -50,10 +50,18 @@ expected_stdout =
     xf = 1.0 2.5 4.0
     """
 
-expected_stderr =
-    """
-    Exception test: MethodError: no method matching this_function_has_no_methods()
-    """
+if VERSION < v"1.11"
+    expected_stderr =
+        """
+        Exception test: MethodError: no method matching this_function_has_no_methods()
+        """
+else
+    expected_stderr =
+        """
+        Exception test: MethodError: no method matching this_function_has_no_methods()
+        The function `this_function_has_no_methods` exists, but no method is defined for this combination of argument types.
+        """
+end
 
 @testset "without sysimage" begin
     out = Pipe()
