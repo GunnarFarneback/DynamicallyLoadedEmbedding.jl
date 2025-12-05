@@ -95,6 +95,8 @@ The only difference from Linux is that `dlsym` is replaced by
 
 ### Renaming of `jl_init`
 
+*This section only applies to Julia 0.7 - 1.6*
+
 If Julia has been compiled with threading enabled, `jl_init` goes
 under the name of `jl_init__threading`. The easiest way to find out is
 to ask `dlsym` to resolve the symbols.
@@ -116,12 +118,11 @@ jl_init();
 
 If you want to start julia with a custom system image, you need to use
 ```
-jl_init_with_image(julia_bindir, julia_system_image_path);
+jl_init_with_image(NULL, julia_system_image_path);
 ```
 
-This requires that you can locate `julia_bindir`, the directory where
-the julia binary lives. Note: in theory `julia_bindir` can be set to
-`NULL` but that does not work with embedding.
+For Julia 0.7 it was necessary to provide `julia_bindir`, the
+directory where the julia binary lives, as first argument.
 
 ## Creating and Retrieving `cfunction` Pointers
 
